@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRBEAST - $1,000,000 PRIZE DROP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --electric: #00F0FF;
+      --hot-pink: #FF2E97;
+      --gold: #FFE14D;
+      --dark: #08080C;
+      --darker: #040406;
+      --surface: #12121A;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--darker);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    #particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .gradient-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 46, 151, 0.1) 0%, transparent 50%);
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(4, 4, 6, 0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--electric), var(--hot-pink));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+    }
+
+    .brand-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #fff, var(--electric));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-stats {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 46, 151, 0.15);
+      border: 1px solid var(--hot-pink);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--hot-pink);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 151, 0.7); }
+      50% { box-shadow: 0 0 0 8px rgba(255, 46, 151, 0); }
+    }
+
+    .entries-badge {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .entries-badge span {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* Button/Link Base Styles */
+    .btn-nav, .btn-primary, .btn-secondary, .btn-footer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-nav {
+      padding: 12px 24px;
+      font-size: 14px;
+      background: linear-gradient(135deg, var(--electric), var(--hot-pink));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 25px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 900px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(255, 225, 77, 0.2), rgba(255, 46, 151, 0.2));
+      border: 1px solid rgba(255, 225, 77, 0.3);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-prize {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 18vw, 200px);
+      line-height: 0.9;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+
+    .hero-prize .dollar {
+      display: inline-block;
+      background: linear-gradient(180deg, var(--gold), #FF9500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2s infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero-prize .amount {
+      display: inline-block;
+      background: linear-gradient(135deg, #fff 0%, var(--electric) 50%, var(--hot-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 80px rgba(0, 240, 255, 0.5);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 48px;
+      line-height: 1.6;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Progress Section */
+    .progress-section {
+      margin-bottom: 48px;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .progress-label {
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .progress-value {
+      color: var(--electric);
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--electric), var(--hot-pink), var(--gold));
+      border-radius: 100px;
+      position: relative;
+      transition: width 1s ease-out;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 20px var(--electric);
+    }
+
+    /* Timer */
+    .timer-section {
+      margin-bottom: 48px;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .timer-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--hot-pink);
+      margin-bottom: 16px;
+    }
+
+    .timer-grid {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .timer-block {
+      background: linear-gradient(180deg, rgba(18, 18, 26, 0.8), rgba(8, 8, 12, 0.9));
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px 24px;
+      min-width: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(0, 240, 255, 0.05), transparent);
+      pointer-events: none;
+    }
+
+    .timer-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--electric);
+      text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+      line-height: 1;
+    }
+
+    .timer-text {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 8px;
+    }
+
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .btn-primary {
+      position: relative;
+      padding: 20px 48px;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--electric), var(--hot-pink));
+      color: #fff;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 240, 255, 0.4);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      padding: 20px 36px;
+      font-size: 16px;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(255, 225, 77, 0.1);
+    }
+
+    /* Prizes Section */
+    .prizes {
+      position: relative;
+      z-index: 10;
+      padding: 100px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--hot-pink);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 80px);
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fff, var(--electric));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      perspective: 1000px;
+    }
+
+    .prize-card {
+      position: relative;
+      background: linear-gradient(180deg, var(--surface), rgba(18, 18, 26, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 40px 32px;
+      transition: transform 0.4s, box-shadow 0.4s;
+      transform-style: preserve-3d;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .prize-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .prize-card:hover {
+      transform: translateY(-12px) rotateX(2deg);
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(0, 240, 255, 0.15);
+    }
+
+    .prize-card.featured {
+      background: linear-gradient(180deg, rgba(255, 225, 77, 0.1), var(--surface));
+      border-color: rgba(255, 225, 77, 0.3);
+    }
+
+    .prize-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 20px;
+      background: linear-gradient(135deg, var(--gold), #FF9500);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    .prize-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(255, 46, 151, 0.2));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+
+    .prize-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .prize-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      background: linear-gradient(135deg, var(--gold), #FF9500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .prize-desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .prize-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .prize-winners {
+      font-size: 12px;
+      color: var(--electric);
+      font-weight: 700;
+    }
+
+    .prize-chance {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* How It Works */
+    .how-it-works {
+      position: relative;
+      z-index: 10;
+      padding: 100px 24px;
+      background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.03), transparent);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .step-card {
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+
+    .step-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-num {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, var(--electric), var(--hot-pink));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      position: relative;
+    }
+
+    .step-num::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 240, 255, 0.3);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.6;
+    }
+
+    /* Winners Section */
+    .winners-section {
+      position: relative;
+      z-index: 10;
+      padding: 100px 24px;
+      background: linear-gradient(180deg, rgba(255, 46, 151, 0.03), transparent);
+    }
+
+    .winners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .winner-card {
+      background: linear-gradient(180deg, var(--surface), rgba(18, 18, 26, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease-out;
+    }
+
+    .winner-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .winner-card.new-winner {
+      animation: highlightNew 1s ease-out;
+    }
+    
+    @keyframes highlightNew {
+      0% { background: rgba(255, 225, 77, 0.2); transform: scale(1.02); }
+      100% { background: linear-gradient(180deg, var(--surface), rgba(18, 18, 26, 0.5)); transform: scale(1); }
+    }
+
+    .winner-card:hover {
+      border-color: rgba(0, 240, 255, 0.3);
+      background: linear-gradient(180deg, rgba(0, 240, 255, 0.05), var(--surface));
+    }
+
+    .winner-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--electric), var(--hot-pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .winner-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      opacity: 0.5;
+    }
+
+    .winner-info {
+      flex-grow: 1;
+    }
+
+    .winner-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .verified-badge {
+      width: 16px;
+      height: 16px;
+      background: var(--electric);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .verified-badge::after {
+      content: '✔';
+      font-size: 10px;
+      color: #000;
+    }
+
+    .winner-location {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 4px;
+    }
+
+    .winner-prize {
+      font-size: 14px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    
+    .winner-date {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      position: relative;
+      z-index: 10;
+      padding: 100px 24px;
+      background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.03), transparent);
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: linear-gradient(180deg, var(--surface), rgba(18, 18, 26, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(0, 240, 255, 0.2);
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 24px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .faq-question:focus {
+      outline: none;
+    }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: transform 0.3s, background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+      background: var(--electric);
+      border-color: var(--electric);
+      color: #000;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 0 24px 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 80px 24px 60px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
+    }
+
+    .footer-cta-container {
+      margin-bottom: 50px;
+    }
+
+    .footer-cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    .btn-footer {
+      position: relative;
+      padding: 22px 60px;
+      font-size: 18px;
+      background: linear-gradient(135deg, var(--gold), #FF9500);
+      color: #000;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(255, 225, 77, 0.2);
+    }
+
+    .btn-footer:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(255, 225, 77, 0.4);
+    }
+
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--electric), var(--hot-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+
+    /* Updated Footer Copy Styling */
+    .footer-copy {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      line-height: 1.8;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .footer-copy span {
+      display: inline-block;
+      margin: 0 5px;
+      opacity: 0.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        padding: 12px 16px;
+      }
+
+      .nav-stats {
+        display: none;
+      }
+      
+      .nav-right {
+        gap: 12px;
+      }
+
+      .btn-nav {
+        padding: 10px 20px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 100px 16px 60px;
+      }
+
+      .timer-grid {
+        gap: 8px;
+      }
+
+      .timer-block {
+        padding: 16px 18px;
+        min-width: 65px;
+      }
+
+      .timer-num {
+        font-size: 36px;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 16px 32px;
+        font-size: 14px;
+      }
+      
+      .winners-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-cta-title {
+        font-size: 28px;
+      }
+
+      .btn-footer {
+        padding: 18px 40px;
+        font-size: 16px;
+      }
+
+      .footer-copy {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <div class="gradient-overlay"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand">
+      <div class="brand-icon">MB</div>
+      <span class="brand-text">MRBEAST</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-stats">
+        <div class="entries-badge">Total Entries: <span id="totalEntries">4,291,847</span></div>
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+      </div>
+      <a href="https://hubverify.com/cl/?o=699fcaec2ffa7" class="btn-nav" id="navEnterBtn">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">World's Biggest Prize Event</div>
+      <h1 class="hero-prize">
+        <span class="dollar">$</span><span class="amount">1,000,000</span>
+      </h1>
+      <p class="hero-subtitle">One winner takes everything. No catch, no purchase needed. Just enter and change your life forever.</p>
+
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">Prize Pool Goal</span>
+          <span class="progress-value"><span id="progressPercent">0</span>%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="timer-label">Ends In</div>
+        <div class="timer-grid">
+          <div class="timer-block">
+            <div class="timer-num" id="days">00</div>
+            <div class="timer-text">Days</div>
+          </div>
+          <div class="timer-block">
+            <div class="timer-num" id="hours">00</div>
+            <div class="timer-text">Hours</div>
+          </div>
+          <div class="timer-block">
+            <div class="timer-num" id="minutes">00</div>
+            <div class="timer-text">Mins</div>
+          </div>
+          <div class="timer-block">
+            <div class="timer-num" id="seconds">00</div>
+            <div class="timer-text">Secs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-group">
+        <a href="https://hubverify.com/cl/?o=699fcaec2ffa7" class="btn-primary" id="heroEnterBtn">Enter to Win</a>
+        <a href="#prizes" class="btn-secondary">View Prizes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prizes -->
+  <section class="prizes" id="prizes">
+    <div class="section-header">
+      <div class="section-tag">What You Could Win</div>
+      <h2 class="section-title">INCREDIBLE PRIZES</h2>
+    </div>
+    <div class="prizes-grid" id="prizesGrid">
+      <div class="prize-card">
+        <div class="prize-icon">Tesla</div>
+        <h3 class="prize-title">Tesla Model S Plaid</h3>
+        <div class="prize-value">$135,000</div>
+        <p class="prize-desc">The fastest production car ever made. 0-60 in 1.99 seconds with over 1,000 horsepower.</p>
+        <div class="prize-meta">
+          <span class="prize-winners">5 Winners</span>
+          <span class="prize-chance">High Chance</span>
+        </div>
+      </div>
+      <div class="prize-card featured">
+        <div class="prize-badge">Grand Prize</div>
+        <div class="prize-icon">Cash</div>
+        <h3 class="prize-title">Life-Changing Cash</h3>
+        <div class="prize-value">$1,000,000</div>
+        <p class="prize-desc">Cold hard cash deposited directly to your account. No taxes, no fees - all yours.</p>
+        <div class="prize-meta">
+          <span class="prize-winners">1 Winner</span>
+          <span class="prize-chance">Jackpot</span>
+        </div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">House</div>
+        <h3 class="prize-title">Dream House</h3>
+        <div class="prize-value">$750,000</div>
+        <p class="prize-desc">Fully furnished luxury home in any US location. Includes 1 year of property taxes paid.</p>
+        <div class="prize-meta">
+          <span class="prize-winners">2 Winners</span>
+          <span class="prize-chance">Medium</span>
+        </div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">Vacation</div>
+        <h3 class="prize-title">Private Island</h3>
+        <div class="prize-value">$500,000</div>
+        <p class="prize-desc">Your own private island in the Bahamas. Includes helicopter access and staff for 1 year.</p>
+        <div class="prize-meta">
+          <span class="prize-winners">1 Winner</span>
+          <span class="prize-chance">Rare</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="section-header">
+      <div class="section-tag">Simple Process</div>
+      <h2 class="section-title">HOW IT WORKS</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3 class="step-title">Enter Your Info</h3>
+        <p class="step-desc">Fill out the simple form with your basic information. Takes less than 30 seconds.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3 class="step-title">Get Your Entry</h3>
+        <p class="step-desc">Receive your unique entry number and confirmation via email instantly.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3 class="step-title">Watch Live Draw</h3>
+        <p class="step-desc">Tune in to the live YouTube stream to watch winners announced in real-time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Winners Section -->
+  <section class="winners-section">
+    <div class="section-header">
+      <div class="section-tag">Real People, Real Wins</div>
+      <h2 class="section-title">RECENT WINNERS</h2>
+    </div>
+    <div class="winners-grid" id="winnersGrid">
+      <!-- Winners will be injected here by JS -->
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="section-header">
+      <div class="section-tag">Got Questions?</div>
+      <h2 class="section-title">FREQUENTLY ASKED QUESTIONS</h2>
+    </div>
+    <div class="faq-container">
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>How do I enter the prize event?</span>
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Entering is simple! Just click the "Enter to Win" button on this page, fill out your basic information (Name, Email), and submit your entry. You'll receive a confirmation email with your unique entry number.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Is this prize event legitimate?</span>
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Yes, absolutely! This is an official MrBeast event. We have given away millions of dollars in the past. Winners are chosen randomly and announced live on our YouTube channel to ensure full transparency.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Do I have to pay anything to enter?</span>
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            No purchase, payment, or financial contribution is necessary to enter or win. This event is 100% free. If anyone asks you for money to claim a prize, it is a scam.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>How will the winner be chosen?</span>
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Winners are selected through a randomized drawing from all eligible entries received. The draw is conducted by a third-party administrator to ensure fairness and integrity. The results are verified and announced publicly.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>How will I know if I won?</span>
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            The winners will be announced live on the MrBeast YouTube channel. Additionally, we will contact the winners directly via the email address provided during entry. Make sure to check your inbox (and spam folder) after the draw!
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-cta-container">
+      <h2 class="footer-cta-title">Don't Miss Your Chance</h2>
+      <a href="https://hubverify.com/cl/?o=699fcaec2ffa7" class="btn-footer" id="footerEnterBtn">Click Here</a>
+    </div>
+
+    <div class="footer-brand">MRBEAST PRIZES</div>
+    
+    <!-- Updated Disclaimer Text -->
+    <div class="footer-copy">
+      Open to legal residents of the 50 U.S. & D.C., 18+.<span>|</span>
+      Void in AK, HI, and where prohibited.<span>|</span>
+      Odds of winning depend on number of entries.<span>|</span>
+      Sponsor: MrBeast LLC.<span>|</span>
+      <br>
+      No purchase necessary.<span>|</span>
+      This promotion is not sponsored, endorsed, or administered by Meta.<span>|</span>
+      2026
+    </div>
+  </footer>
+
+  <script>
+    // --- Particle System ---
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let bursts = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      constructor(x, y, isBurst = false) {
+        this.x = x || Math.random() * width;
+        this.y = y || Math.random() * height;
+        this.vx = isBurst ? (Math.random() - 0.5) * 8 : (Math.random() - 0.5) * 0.3;
+        this.vy = isBurst ? (Math.random() - 0.5) * 8 : (Math.random() - 0.5) * 0.3;
+        this.size = isBurst ? Math.random() * 4 + 2 : Math.random() * 2 + 0.5;
+        this.life = isBurst ? 1 : null;
+        this.decay = isBurst ? 0.02 : 0;
+        this.color = this.getColor();
+        this.isBurst = isBurst;
+      }
+
+      getColor() {
+        const colors = ['#00F0FF', '#FF2E97', '#FFE14D', '#FFFFFF'];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.isBurst) {
+          this.life -= this.decay;
+          this.vy += 0.1;
+        } else {
+          if (this.x < 0 || this.x > width) this.vx *= -1;
+          if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        if (this.isBurst) ctx.globalAlpha = this.life;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < 80; i++) {
+        particles.push(new Particle());
+      }
+    }
+    initParticles();
+
+    function createBurst(x, y, count = 40) {
+      for (let i = 0; i < count; i++) {
+        bursts.push(new Particle(x, y, true));
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p1, i) => {
+        particles.slice(i + 1).forEach(p2 => {
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.08 * (1 - dist / 150)})`;
+            ctx.stroke();
+          }
+        });
+      });
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      bursts = bursts.filter(p => p.life > 0);
+      bursts.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // --- Countdown Timer ---
+    function updateTimer() {
+      const end = new Date();
+      end.setDate(end.getDate() + 2);
+      end.setHours(23, 59, 59);
+      const now = new Date();
+      const diff = end - now;
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = String(d).padStart(2, '0');
+      document.getElementById('hours').textContent = String(h).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // --- Progress Bar Animation ---
+    setTimeout(() => {
+      const progress = 73;
+      document.getElementById('progressFill').style.width = progress + '%';
+      animateValue('progressPercent', 0, progress, 1500);
+    }, 500);
+
+    function animateValue(id, start, end, duration) {
+      const el = document.getElementById(id);
+      const startTime = performance.now();
+
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(start + (end - start) * eased);
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // --- Entry Counter ---
+    let entries = 4291847;
+    setInterval(() => {
+      entries += Math.floor(Math.random() * 8) + 2;
+      document.getElementById('totalEntries').textContent = entries.toLocaleString();
+    }, 2000);
+
+    // --- Scroll Animations ---
+    const observerOptions = { threshold: 0.2, rootMargin: '0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 100);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.prize-card, .step-card').forEach(el => observer.observe(el));
+
+    // --- Dynamic Winners Logic ---
+    const firstNames = ['James', 'Mary', 'Robert', 'Patricia', 'John', 'Jennifer', 'Michael', 'Linda', 'David', 'Elizabeth', 'William', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica', 'Thomas', 'Sarah', 'Charles', 'Karen', 'Chris', 'Emma', 'Daniel', 'Olivia', 'Matthew', 'Ava', 'Anthony', 'Sophia'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez'];
+    const prizes = ['$10,000 Cash', '$50,000 Cash', 'Tesla Model 3', 'PlayStation 5', 'iPhone 15 Pro', 'Gaming PC Setup', 'Dream Vacation', '$5,000 Cash', 'Rolex Watch', 'MacBook Pro'];
+    const usCities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Washington'];
+    const usStates = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA', 'TX', 'FL', 'TX', 'OH', 'NC', 'CA', 'IN', 'WA', 'CO', 'DC'];
+
+    function getRandomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function getRandomTimeAgo() {
+      const units = ['minutes', 'hours', 'days'];
+      const unit = getRandomItem(units);
+      let value;
+      
+      if (unit === 'minutes') value = Math.floor(Math.random() * 59) + 1;
+      else if (unit === 'hours') value = Math.floor(Math.random() * 23) + 1;
+      else value = Math.floor(Math.random() * 3) + 1; // 1-3 days
+
+      if (value === 1) return `${value} ${unit.slice(0, -1)} ago`;
+      return `${value} ${unit} ago`;
+    }
+
+    function generateWinnerCard(isNew = false) {
+      const fn = getRandomItem(firstNames);
+      const ln = getRandomItem(lastNames);
+      const cityIdx = Math.floor(Math.random() * usCities.length);
+      
+      const card = document.createElement('div');
+      card.className = `winner-card ${isNew ? 'new-winner' : ''}`;
+      
+      card.innerHTML = `
+        <div class="winner-avatar">${fn[0]}${ln[0]}</div>
+        <div class="winner-info">
+          <div class="winner-name">${fn} ${ln[0]}. <span class="verified-badge"></span></div>
+          <div class="winner-location">${usCities[cityIdx]}, ${usStates[cityIdx]}</div>
+          <div class="winner-prize">Won: ${getRandomItem(prizes)}</div>
+          <div class="winner-date">${isNew ? 'Just now' : getRandomTimeAgo()}</div>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    // Initial population
+    const winnersGrid = document.getElementById('winnersGrid');
+    for (let i = 0; i < 6; i++) {
+      const card = generateWinnerCard(false);
+      winnersGrid.appendChild(card);
+      // Observe for scroll animation
+      observer.observe(card);
+    }
+
+    // Add new winner periodically
+    setInterval(() => {
+      const newCard = generateWinnerCard(true);
+      winnersGrid.insertBefore(newCard, winnersGrid.firstChild);
+      
+      // Remove old card if too many
+      if (winnersGrid.children.length > 8) {
+        winnersGrid.lastChild.remove();
+      }
+      
+      // Trigger animation
+      setTimeout(() => {
+        newCard.classList.add('visible');
+      }, 50);
+      
+    }, 15000); // Every 15 seconds
+
+    // --- FAQ Accordion Logic ---
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        // Close all other items
+        faqItems.forEach(otherItem => {
+          otherItem.classList.remove('active');
+        });
+
+        // Toggle current item
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // --- Button Interactions ---
+    function handleEntryClick(e) {
+      e.preventDefault(); // Prevent immediate navigation for animation
+      createBurst(e.clientX, e.clientY, 100);
+      
+      const targetUrl = e.currentTarget.getAttribute('href');
+      
+      // Navigate after a short delay to show the burst
+      if(targetUrl && targetUrl !== '#' && targetUrl !== '#prizes') {
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 400); // 400ms delay
+      }
+    }
+
+    document.getElementById('heroEnterBtn').addEventListener('click', handleEntryClick);
+    document.getElementById('navEnterBtn').addEventListener('click', handleEntryClick);
+    document.getElementById('footerEnterBtn').addEventListener('click', handleEntryClick);
+
+    // Prize Card Hover Burst
+    document.querySelectorAll('.prize-card').forEach(card => {
+      card.addEventListener('mouseenter', function(e) {
+        const rect = this.getBoundingClientRect();
+        createBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+      });
+    });
+
+    // Mouse trail burst
+    let lastBurst = 0;
+    document.addEventListener('mousemove', (e) => {
+      if (Date.now() - lastBurst > 200 && Math.random() > 0.8) {
+        createBurst(e.clientX, e.clientY, 3);
+        lastBurst = Date.now();
+      }
+    });
+  </script>
+</body>
+</html>
